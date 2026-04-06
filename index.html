@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillTree — RPG Learning Tracker</title>
+    <meta name="description" content="Track your coding skills with an RPG-style skill tree. Level up as you master new technologies.">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Particle Container (overlay) -->
+    <svg id="particles-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999"></svg>
+
+    <div id="app">
+        <!-- Left Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">SKILLTREE</h1>
+            </div>
+
+            <!-- Adventurer Stats -->
+            <section class="stats-section">
+                <h2 class="section-title">ADVENTURER STATS</h2>
+                <div class="stats-grid">
+                    <div class="stat-card stat-mastered">
+                        <span class="stat-value" id="stat-mastered">0</span>
+                        <span class="stat-label">Mastered</span>
+                    </div>
+                    <div class="stat-card stat-progress">
+                        <span class="stat-value" id="stat-progress">0</span>
+                        <span class="stat-label">In Progress</span>
+                    </div>
+                    <div class="stat-card stat-locked">
+                        <span class="stat-value" id="stat-locked">0</span>
+                        <span class="stat-label">Locked</span>
+                    </div>
+                    <div class="stat-card stat-total">
+                        <span class="stat-value" id="stat-total">0</span>
+                        <span class="stat-label">Total Skills</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Legend -->
+            <section class="legend-section">
+                <h2 class="section-title">LEGEND</h2>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="legend-dot dot-locked"></span>
+                        <span>Locked — not started</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot dot-progress"></span>
+                        <span>In Progress — learning</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot dot-mastered"></span>
+                        <span>Mastered — skill learned</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Add Skill -->
+            <section class="add-skill-section">
+                <h2 class="section-title">ADD SKILL</h2>
+                <div class="form-group">
+                    <input type="text" id="new-skill-name" class="form-input" placeholder="Skill name (e.g. React)">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="new-skill-category" class="form-input" placeholder="Category (e.g. Frontend)">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="new-skill-icon" class="form-input" placeholder="Icon emoji (e.g. ⚛️)">
+                </div>
+                <div class="form-group">
+                    <select id="new-skill-parent" class="form-select">
+                        <option value="">No Parent (Root)</option>
+                    </select>
+                </div>
+                <button class="btn-add-skill" id="btn-add-skill">+ ADD TO TREE</button>
+            </section>
+
+            <!-- Connect Mode -->
+            <section class="connect-section">
+                <h2 class="section-title">CONNECT MODE</h2>
+                <div class="connect-toggle-row">
+                    <button class="btn-connect-toggle" id="btn-connect-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                        </svg>
+                        LINK SKILLS
+                    </button>
+                    <span class="connect-hint">Click to enable</span>
+                </div>
+            </section>
+
+            <!-- Reset -->
+            <div class="sidebar-footer">
+                <button class="btn-reset" id="btn-reset">↺ Reset All Progress</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Top Bar (Character) -->
+            <header class="top-bar">
+                <div class="top-bar-spacer"></div>
+                <div class="character-panel">
+                    <div class="avatar-circle">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="48" stroke="#d4a44a" stroke-width="3" fill="#1a2340"/>
+                            <circle cx="50" cy="38" r="14" fill="#d4a44a"/>
+                            <path d="M22 85 Q50 55 78 85" stroke="#d4a44a" stroke-width="8" fill="none" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="character-info">
+                        <span class="character-title" id="user-title">ADEPT</span>
+                        <div class="level-xp-row">
+                            <div class="level-badge" id="level-badge">
+                                <span class="lvl-label">LVL</span>
+                                <span class="lvl-number" id="level-display">1</span>
+                            </div>
+                            <div class="xp-bar-wrapper">
+                                <div class="xp-bar-container">
+                                    <div class="xp-bar-fill" id="xp-bar"></div>
+                                </div>
+                                <span class="xp-text"><span id="current-xp">0</span> / <span id="target-xp">100</span> XP</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Tree View -->
+            <main class="tree-wrap" id="tree-wrap">
+                <svg id="svg-tree" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="glow-learned" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="8" result="blur" />
+                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                        <filter id="glow-available" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="5" result="blur" />
+                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                        <filter id="glow-progress" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="6" result="blur" />
+                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                    </defs>
+                    <g id="svg-pan-zoom-group">
+                        <g id="edges-group"></g>
+                        <g id="nodes-group"></g>
+                    </g>
+                </svg>
+
+                <!-- Recenter Button -->
+                <button id="btn-recenter" class="btn-recenter" title="Recenter View">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </button>
+            </main>
+        </div>
+
+        <!-- Tooltip -->
+        <div id="tooltip" class="tooltip hidden">
+            <h3 id="tooltip-title">Title</h3>
+            <p id="tooltip-status">Status</p>
+            <p id="tooltip-xp" class="xp-reward">+XP</p>
+            <p id="tooltip-instruction" class="instruction"></p>
+        </div>
+
+        <!-- Notification Toast -->
+        <div id="toast"></div>
+    </div>
+    
+    <script src="js/data.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/panzoom.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
